@@ -6,10 +6,14 @@ import {
   View,
   FlatList,
   Button,
-  CheckBox
+  CheckBox,
+  TouchableOpacity
   
 } from "react-native";
 import { dataBase } from "./data/convertedData";
+import Icon from 'react-native-vector-icons/FontAwesome';
+import ArrowButtons from "./components/ArrowButtons";
+
 var DATA=removeEmptyString(dataBase);
 
 
@@ -22,7 +26,9 @@ function removeEmptyString(object)
      
         for(let k=0;k<keys.length;k++)
         {
-          newObj[i].isChecked=false;//this is adding isChecked to the object
+          //this is adding isChecked to the object
+ 
+          newObj[i].isChecked=false;         
           if(newObj[i][keys[k]]=='')
           {
             newObj[i][keys[k]]='NA';
@@ -75,13 +81,15 @@ const Item = ({ title }) => (
 
 const App = () => {
   const [tempDataGetter,tempDataSetter]=React.useState(DATA);
-  const [isSelected, setSelection] = useState(false);
+  const [isBoxChecked, setCheck] = React.useState(false);
+  
 
   const handleChange=(item)=>{
-    console.log("selected item index -->",tempDataGetter.indexOf(item))
+    console.log("selected item index -->",tempDataGetter.indexOf(item),'\t and status-->',item.isChecked)
     let temp=tempDataGetter.map((data)=>{
       if(item.Item_ID===data.Item_ID)
-      {
+      { 
+          setCheck(!isBoxChecked); 
         return {...data, isChecked:!data.isChecked};
       }
       return data;
@@ -169,6 +177,36 @@ onPress={convertToCSV.bind(this,DATA)}
 
  </View>
 
+<View style={[ !isBoxChecked?{display:"none"}:styles.topDownButtonContainer]}   >
+  
+
+  
+      <TouchableOpacity
+       // onPress={buttonClickedHandler}
+        style={styles.arrowButtons}
+        >
+        <Icon
+    name="chevron-up"
+    backgroundColor="#3b5998"
+  />
+    
+      </TouchableOpacity>
+      
+      <TouchableOpacity
+       // onPress={buttonClickedHandler}
+      
+        style={styles.arrowButtons}
+      >
+
+        <Icon
+    name="chevron-down"
+    backgroundColor="#3b5998"
+  />
+      </TouchableOpacity>
+     
+</View>
+
+
     </View>
       
   );
@@ -196,6 +234,29 @@ const styles = StyleSheet.create({
   },
   checkbox:{
     marginRight:5
+  },
+  arrowButtons: {
+    width: 50,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
+    borderRadius: 100,
+    backgroundColor: 'orange',  
+    marginHorizontal:10                                 
+
+  },
+
+  topDownButtonContainer:{
+    width: 100,
+    height: 50,
+    justifyContent: 'space-around',
+    alignItems: 'center',                                   
+position: 'fixed',                                          
+bottom: 10,                                                    
+right:30,
+display:'flex',
+flexDirection:'row'
   }
 });
 
