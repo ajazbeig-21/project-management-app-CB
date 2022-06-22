@@ -1,5 +1,4 @@
-
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -12,7 +11,6 @@ import {
 } from "react-native";
 import { dataBase } from "./data/convertedData";
 import Icon from 'react-native-vector-icons/FontAwesome';
-import ArrowButtons from "./components/ArrowButtons";
 
 var DATA=removeEmptyString(dataBase);
 
@@ -80,21 +78,65 @@ const Item = ({ title }) => (
 
 
 const App = () => {
-  const [tempDataGetter,tempDataSetter]=React.useState(DATA);
+  const [tempDataGetter,tempDataSetter]=React.useState(()=>{
+    
+    console.log('rendering in main');
+    return DATA;
+  });
   const [isBoxChecked, setCheck] = React.useState(false);
+  const [selectedIndex, setSelectedIndex] = React.useState();
   
 
+  const upButton=()=>{
+    console.log('in upButton index',selectedIndex);
+     let tempData=tempDataGetter;
+     console.log("before swap-->",tempDataGetter);
+     let elementAtIndex=tempData[selectedIndex];
+     console.log('elementAtIndex ',elementAtIndex);
+  
+     let previousElement=tempData[selectedIndex-1];
+     console.log('previousElement',previousElement);
+  
+     tempData[selectedIndex]=previousElement;
+     tempData[selectedIndex-1]=elementAtIndex;
+  
+     console.log("after swap-->",tempData);
+  
+     console.log("selectedIndex previous-->",selectedIndex);
+
+    setSelectedIndex((prevCount)=>{return prevCount-1;})
+     tempDataSetter(tempData);
+     console.log("selectedIndex After-->",selectedIndex);
+
+  
+    }
+
   const handleChange=(item)=>{
-    console.log("selected item index -->",tempDataGetter.indexOf(item),'\t and status-->',item.isChecked)
+    setSelectedIndex(tempDataGetter.indexOf(item))
+    console.log("94 ajaz------>  ",selectedIndex);
+
+    if(item.isChecked===false)
+    {
+      console.log("selected item index -->",tempDataGetter.indexOf(item) , selectedIndex,'\t and status-->',item.isChecked);
+    }
+    
     let temp=tempDataGetter.map((data)=>{
       if(item.Item_ID===data.Item_ID)
       { 
+         
           setCheck(!isBoxChecked); 
         return {...data, isChecked:!data.isChecked};
       }
       return data;
     });
     tempDataSetter(temp);
+  }
+
+
+
+  function downButton()
+  {
+    console.log('Hey... You selected...Down', selectedIndex);
   }
 
   let selected=tempDataGetter.filter((data)=>data.isChecked);
@@ -117,7 +159,8 @@ function checkForPresence(Item_ID)
   }
 }
  
-  
+console.log('134 ajaz selected index--->',selectedIndex);
+
   console.log("tempDataGetter-->",tempDataGetter);
   const [getTempList,setTempList]=React.useState([]);
 
@@ -167,22 +210,24 @@ function checkForPresence(Item_ID)
         renderItem={renderItem}
         keyExtractor={item => item['Item_ID']}
       />
-
+     
 <View>
 
 <Button
 title="export"
-onPress={convertToCSV.bind(this,DATA)}
+onPress={convertToCSV.bind(this,tempDataGetter)}
 /> 
 
  </View>
 
-<View style={[ !isBoxChecked?{display:"none"}:styles.topDownButtonContainer]}   >
+<View style={[ /*!isBoxChecked && selectedIndex==undefined?{display:"none"}:*/styles.topDownButtonContainer]}   >
   
 
   
       <TouchableOpacity
-       // onPress={buttonClickedHandler}
+        onPress={()=>{
+          upButton()
+        }}
         style={styles.arrowButtons}
         >
         <Icon
@@ -192,10 +237,8 @@ onPress={convertToCSV.bind(this,DATA)}
     
       </TouchableOpacity>
       
-      <TouchableOpacity
-       // onPress={buttonClickedHandler}
-      
-        style={styles.arrowButtons}
+      <TouchableOpacity      
+         style={styles.arrowButtons}
       >
 
         <Icon
