@@ -30,8 +30,18 @@ function removeEmptyString(object) {
 }
 
 function convertToCSV(objArray) {
+
+  let tempKeys=Object.keys(DATA[0]);
+    tempKeys.splice(-1,1);
+    
+
   var array = typeof objArray != "object" ? JSON.parse(objArray) : objArray;
-  var str = "";
+  var str = `${tempKeys}  \r\n`;
+
+  for(var i=0;i<array.length;i++)
+  {
+    delete array[i]['isChecked'];
+  }
 
   for (var i = 0; i < array.length; i++) {
     var line = "";
@@ -43,7 +53,7 @@ function convertToCSV(objArray) {
 
     str += line + "\r\n";
   }
-
+  
   //Download the file as CSV
   var downloadLink = document.createElement("a");
   var blob = new Blob(["\ufeff", str]);
@@ -63,13 +73,23 @@ const Item = ({ title }) => (
   </View>
 );
 
+
+
 const App = () => {
   const [tempDataGetter, tempDataSetter] = React.useState(() => {
     return DATA;
   });
   const [isBoxChecked, setCheck] = React.useState(false);
   const [selectedIndex, setSelectedIndex] = React.useState();
+  const [getDataKeys,setDataKeys]=React.useState(()=>{
+    let tempKeys=Object.keys(tempDataGetter[0]);
+    tempKeys.splice(-1,1);
+    console.log("tempKeys",tempKeys);
+    return tempKeys;
+  });
 
+ 
+  
   const upButton = () => {
     let tempData = tempDataGetter;
     let elementAtIndex = tempData[selectedIndex];
