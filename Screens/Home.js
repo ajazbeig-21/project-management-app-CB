@@ -89,7 +89,6 @@ const Home = ({uploadedData}) => {
   
     //return str;
   }
-  
   const upButton = () => {
     let tempData = tempDataGetter;
     let elementAtIndex = tempData[selectedIndex];
@@ -193,12 +192,12 @@ const Home = ({uploadedData}) => {
         keyExtractor={(item) => item["Item_ID"]}
       />
       
-      <View>
+      {/* <View>
         <Button
           title="export"
           onPress={convertToCSV.bind(this, tempDataGetter)}
         />
-      </View>
+      </View> */}
 
 
       <View
@@ -212,7 +211,7 @@ const Home = ({uploadedData}) => {
           }}
           style={styles.arrowButtons}
         >
-          <Icon name="chevron-up" backgroundColor="#3b5998" />
+          <Icon name="chevron-up"size={20}  backgroundColor="#3b5998" />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -221,7 +220,14 @@ const Home = ({uploadedData}) => {
           }}
           style={styles.arrowButtons}
         >
-          <Icon name="chevron-down" backgroundColor="#3b5998" />
+          <Icon name="chevron-down" size={20}  backgroundColor="#3b5998" />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+         onPress={convertToCSV.bind(this, tempDataGetter)}
+          style={[styles.arrowButtons,{backgroundColor:'black'}]}
+        >
+          <Icon name="download" size={20} color="white" />
         </TouchableOpacity>
       </View>
 
@@ -270,7 +276,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     position: "fixed",
     bottom: 10,
-    right: 30,
+    right: 50,
     display: "flex",
     flexDirection: "row",
   },
