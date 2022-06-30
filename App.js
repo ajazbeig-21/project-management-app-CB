@@ -51,7 +51,7 @@ if(invalidLogin==true)
 {
  alertBox=<AwesomeAlert
  show={showAlert}
- showProgress={false}
+ showProgress={true}
  title="Incorrect Credentials"
  message="May be your Username or Password is incorrect"
  closeOnTouchOutside={true}
