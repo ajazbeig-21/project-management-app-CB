@@ -44,8 +44,8 @@ else{
  setAlert(true);
 }
 }
-
-let curretComponent=<Login loginHandler={handleUserInput}/>;
+let curretComponent=<UploadPage fileSelected={pickedFileHandler} />
+//let curretComponent=<Login loginHandler={handleUserInput}/>;
 let alertBox='';
 if(invalidLogin==true)
 {
@@ -63,16 +63,16 @@ if(invalidLogin==true)
  />;
 }
 
-  if(loggedIn!==true)
-  {
-    //curretComponent=<UploadPage fileSelected={pickedFileHandler} />;
-  curretComponent=<Login loginHandler={handleUserInput}/>
-  }
+  // if(loggedIn!==true)
+  // {
+  //   //curretComponent=<UploadPage fileSelected={pickedFileHandler} />;
+  // curretComponent=<Login loginHandler={handleUserInput}/>
+  // }
 
-  if(loggedIn==true)
-  {
-    curretComponent=<UploadPage fileSelected={pickedFileHandler} />;
-  }
+  // if(loggedIn==true)
+  // {
+  //   curretComponent=<UploadPage fileSelected={pickedFileHandler} />;
+  // }
 
   if(csvData.length>1)
   {

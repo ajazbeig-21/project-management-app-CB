@@ -10,8 +10,8 @@ import {
 } from "react-native";
 //import { dataBase } from "../data/convertedData";
 import Icon from "react-native-vector-icons/FontAwesome";
+import Modal from "react-native-modal";
 //var DATA = removeEmptyString(dataBase);
-
 function removeEmptyString(object) {
   var newObj = object;
   const keys = Object.keys(newObj[0]);
@@ -50,7 +50,6 @@ const Home = ({uploadedData}) => {
     console.log("tempKeys",tempKeys);
     return tempKeys;
   });
-
  
   function convertToCSV(objArray) {
 
@@ -101,6 +100,8 @@ const Home = ({uploadedData}) => {
     tempDataSetter(tempData);
     console.log("UP------>",tempDataGetter);
   };
+
+  
   const downButton = () => {
     let tempData = tempDataGetter;
     let elementAtIndex = tempData[selectedIndex];
@@ -160,7 +161,17 @@ const Home = ({uploadedData}) => {
           style={styles.checkbox}
         />
       </View>
+     
       <Text
+      onClick={(()=>{
+         let count=0;
+         while(count!=2)
+         {
+          console.log('clicked-->',count);
+          count++;
+         }
+        
+        })}
         numberOfLines={1}
         style={{ fontSize: 15, textAlign: "left", flex: 1 }}
 
@@ -179,12 +190,16 @@ const Home = ({uploadedData}) => {
           "\t| " +
           item["Task Owner"]}
       </Text>
+      <Icon name="pencil" size={18} color="black" style={{cursor:'pointer', marginHorizontal:10}} />
+      <Icon name="trash" size={18} color="black" style={{cursor:'pointer'}} onPress={()=>{
+      
+      }} />
+
     </View>
   );
 
   return (
     <View>
-      
       
       <FlatList
         data={tempDataGetter}
