@@ -27,9 +27,9 @@ for(var i=1;i<data.length;i++)
 
 var jsonData=JSON.stringify(objData);
 jsonData=jsonData.replace(/},/g,"},\r\n");
- console.log("Start of Function");
- console.log(typeof(jsonData));
- console.log("End of Function");
+ //console.log("Start of Function");
+ //console.log(typeof(jsonData));
+ //console.log("End of Function");
 return JSON.parse(jsonData);
 }
 
@@ -45,9 +45,9 @@ const pickDocument = async () => {
     result.file,
     {
       complete: (results) => {
-          console.log(results.data);
-          console.log("PRINTING CSV TO JSON");
-          console.log(csvtoJSON(results.data));
+       //   console.log(results.data);
+         // console.log("PRINTING CSV TO JSON");
+          //console.log(csvtoJSON(results.data));
           fileSelected(csvtoJSON(results.data));
       }
     }

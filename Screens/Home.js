@@ -7,10 +7,14 @@ import {
   Button,
   CheckBox,
   TouchableOpacity,
+  ScrollView,
+  Modal,
+  Pressable
 } from "react-native";
 //import { dataBase } from "../data/convertedData";
+import { DataTable } from 'react-native-paper';
+
 import Icon from "react-native-vector-icons/FontAwesome";
-import Modal from "react-native-modal";
 //var DATA = removeEmptyString(dataBase);
 function removeEmptyString(object) {
   var newObj = object;
@@ -28,54 +32,52 @@ function removeEmptyString(object) {
   return newObj;
 }
 
-
-
 const Item = ({ title }) => (
   <View style={styles.item}>
     <Text style={styles.title}>{title}</Text>
   </View>
 );
 
+const Home = ({ uploadedData }) => {
 
-
-const Home = ({uploadedData}) => {
   const [tempDataGetter, tempDataSetter] = React.useState(() => {
-    return  removeEmptyString(uploadedData);
+    return removeEmptyString(uploadedData);
   });
+  console.log("temp data getter--->",tempDataGetter);
   const [isBoxChecked, setCheck] = React.useState(false);
   const [selectedIndex, setSelectedIndex] = React.useState();
-  const [getDataKeys,setDataKeys]=React.useState(()=>{
-    let tempKeys=Object.keys(tempDataGetter[0]);
-    tempKeys.splice(-1,1);
-    console.log("tempKeys",tempKeys);
+  const [getDataKeys, setDataKeys] = React.useState(() => {
+    let tempKeys = Object.keys(tempDataGetter[0]);
+    tempKeys.splice(-1, 1);
+    console.log("tempKeys", tempKeys);
     return tempKeys;
   });
- 
-  function convertToCSV(objArray) {
+  const [getDeleteIndex, setDeleteIndex] = React.useState();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [getTempList, setTempList] = React.useState([]);
 
-    let tempKeys=Object.keys(tempDataGetter[0]);
-      tempKeys.splice(-1,1);
-      
-  
+  function convertToCSV(objArray) {
+    let tempKeys = Object.keys(tempDataGetter[0]);
+    tempKeys.splice(-1, 1);
+
     var array = typeof objArray != "object" ? JSON.parse(objArray) : objArray;
     var str = `${tempKeys}  \r\n`;
-  
-    for(var i=0;i<array.length;i++)
-    {
-      delete array[i]['isChecked'];
+
+    for (var i = 0; i < array.length; i++) {
+      delete array[i]["isChecked"];
     }
-  
+
     for (var i = 0; i < array.length; i++) {
       var line = "";
       for (var index in array[i]) {
         if (line != "") line += ",";
-  
+
         line += array[i][index];
       }
-  
+
       str += line + "\r\n";
     }
-    
+
     //Download the file as CSV
     var downloadLink = document.createElement("a");
     var blob = new Blob(["\ufeff", str]);
@@ -85,7 +87,7 @@ const Home = ({uploadedData}) => {
     document.body.appendChild(downloadLink);
     downloadLink.click();
     document.body.removeChild(downloadLink);
-  
+
     //return str;
   }
   const upButton = () => {
@@ -98,10 +100,14 @@ const Home = ({uploadedData}) => {
       return prevCount - 1;
     });
     tempDataSetter(tempData);
-    console.log("UP------>",tempDataGetter);
+    console.log("UP------>", tempDataGetter);
   };
 
-  
+  const deleteItem=()=> {
+   
+
+  }
+
   const downButton = () => {
     let tempData = tempDataGetter;
     let elementAtIndex = tempData[selectedIndex];
@@ -112,8 +118,7 @@ const Home = ({uploadedData}) => {
       return prevCount + 1;
     });
     tempDataSetter(tempData);
-    console.log("DOWN------>",tempDataGetter);
-
+    console.log("DOWN------>", tempDataGetter);
   };
 
   const handleChange = (item) => {
@@ -143,15 +148,82 @@ const Home = ({uploadedData}) => {
     }
   }
 
-  const [getTempList, setTempList] = React.useState([]);
+  
+  const tableHeader=()=>{
+      return <DataTable.Header style={{borderWidth:0,padding:0,margin:0}}>
+      <DataTable.Title style={{flex:0.3}}> </DataTable.Title>
+        <DataTable.Title style={{flex:0.3}}> </DataTable.Title>
+        <DataTable.Title>{getDataKeys[1]}</DataTable.Title>
+        <DataTable.Title>{getDataKeys[3]}</DataTable.Title>
+        <DataTable.Title style={{flex:1.5}}>{getDataKeys[9]}</DataTable.Title>
+        <DataTable.Title>{getDataKeys[5]}</DataTable.Title>
+        <DataTable.Title >{getDataKeys[6]}</DataTable.Title>
+        <DataTable.Title style={{flex:5}}>{getDataKeys[7]}</DataTable.Title>
+        <DataTable.Title> </DataTable.Title>
+    
+      </DataTable.Header>;
+      
+    
+  }
 
-  const renderItem = ({ item }) => (
+  const renderItemTable = ({ item }) => (
+   
+
     <View
-    style={item === tempDataGetter[selectedIndex] ? styles.selectedItem: styles.unSelectedItem}
-
-     
+      style={
+        item === tempDataGetter[selectedIndex]
+          ? styles.selectedItem
+          : styles.unSelectedItem
+      }
     >
-      <View>
+
+<DataTable style={{borderWidth:0,padding:0,margin:0}}>
+       
+ {/* {tableHeader()}  */}
+<DataTable.Row style={{borderWidth:0,padding:0,margin:0}}>
+<DataTable.Cell  style={{flex:0.3}}>
+        <CheckBox
+          //addtotemparray.bind(this,item)
+          value={item.isChecked}
+          onValueChange={() => {
+            handleChange(item);
+          }}
+        />
+      </DataTable.Cell>
+      <DataTable.Cell style={{flex:0.3}} >{item["Sequence"]}</DataTable.Cell>
+      <DataTable.Cell >{item["Item_ID"]}</DataTable.Cell>
+      <DataTable.Cell >{item["Product"]}</DataTable.Cell>
+      <DataTable.Cell >{item["Priority"]}</DataTable.Cell>
+      <DataTable.Cell style={{flex:1.5}}>{item["Task Owner"]}</DataTable.Cell>
+
+      <DataTable.Cell >{item["Type"]}</DataTable.Cell>
+      <DataTable.Cell  style={{flex:5}}>{item["Task Name"]}</DataTable.Cell>  
+       <DataTable.Cell>
+       <Icon
+        name="pencil"
+        size={18}
+        color="black"
+        style={{ cursor: "pointer", marginHorizontal: 10 }}
+      />
+       
+      <Icon
+        name="trash"
+        size={18}
+        color="black"
+        style={{ cursor: "pointer" }}
+        onPress={() => {
+          
+        }}
+      />
+       </DataTable.Cell>
+
+
+
+      
+    </DataTable.Row>
+</DataTable>
+
+      {/* <View>
         <CheckBox
           //addtotemparray.bind(this,item)
           value={item.isChecked}
@@ -161,20 +233,9 @@ const Home = ({uploadedData}) => {
           style={styles.checkbox}
         />
       </View>
-     
       <Text
-      onClick={(()=>{
-         let count=0;
-         while(count!=2)
-         {
-          console.log('clicked-->',count);
-          count++;
-         }
-        
-        })}
         numberOfLines={1}
         style={{ fontSize: 15, textAlign: "left", flex: 1 }}
-
       >
         {item["Sequence"] +
           "\t| " +
@@ -190,30 +251,117 @@ const Home = ({uploadedData}) => {
           "\t| " +
           item["Task Owner"]}
       </Text>
-      <Icon name="pencil" size={18} color="black" style={{cursor:'pointer', marginHorizontal:10}} />
-      <Icon name="trash" size={18} color="black" style={{cursor:'pointer'}} onPress={()=>{
-      
-      }} />
+      <Icon
+        name="pencil"
+        size={18}
+        color="black"
+        style={{ cursor: "pointer", marginHorizontal: 10 }}
+      />
+      <Icon
+        name="trash"
+        size={18}
+        color="black"
+        style={{ cursor: "pointer" }}
+        onPress={() => {
+          
+        }}
+      /> */}
+    </View>
+  );
 
+  const renderItem = ({ item }) => (
+    <View
+      style={
+        item === tempDataGetter[selectedIndex]
+          ? styles.selectedItem
+          : styles.unSelectedItem
+      }
+    >
+      <View>
+        <CheckBox
+          //addtotemparray.bind(this,item)
+          value={item.isChecked}
+          onValueChange={() => {
+            handleChange(item);
+          }}
+          style={styles.checkbox}
+        />
+      </View>
+      <Text
+        numberOfLines={1}
+        style={{ fontSize: 15, textAlign: "left", flex: 1 }}
+      >
+        {item["Sequence"] +
+          "\t| " +
+          item["Item_ID"] +
+          "\t| " +
+          item["Product"] +
+          "\t| " +
+          item["Priority"] +
+          "\t| " +
+          item["Type"] +
+          "\t| " +
+          item["Task Name"] +
+          "\t| " +
+          item["Task Owner"]}
+      </Text>
+      <Icon
+        name="pencil"
+        size={18}
+        color="black"
+        style={{ cursor: "pointer", marginHorizontal: 10 }}
+      />
+      <Icon
+        name="trash"
+        size={18}
+        color="black"
+        style={{ cursor: "pointer" }}
+        onPress={() => {
+          
+        }}
+      />
     </View>
   );
 
   return (
     <View>
+      {/* <View>
+      <Text
+       numberOfLines={1}
+       style={{ fontSize: 15, textAlign: "left", flex: 1,marginBottom:5,zIndex:2 }}
+      >
+        
+        {getDataKeys[0] +
+          "\t| " +
+          getDataKeys[1] +
+          "\t| " +
+          getDataKeys[2] +
+          "\t| " +
+          getDataKeys[3] +
+          "\t| " +
+          getDataKeys[4] +
+          "\t| " +
+          getDataKeys[5] +
+          "\t| " +
+          getDataKeys[6]}
+      </Text>
+      </View> */}
       
+ 
       <FlatList
+      style={{marginBottom:60,overflow:'auto'}}
         data={tempDataGetter}
-        renderItem={renderItem}
-        keyExtractor={(item) => item["Item_ID"]}
+        renderItem={renderItemTable}
+        keyExtractor={(item) => ""+ item["Item_ID"]}
       />
-      
+    
+
       {/* <View>
         <Button
           title="export"
           onPress={convertToCSV.bind(this, tempDataGetter)}
         />
       </View> */}
-
 
       <View
         style={[
@@ -226,7 +374,7 @@ const Home = ({uploadedData}) => {
           }}
           style={styles.arrowButtons}
         >
-          <Icon name="chevron-up"size={20}  backgroundColor="#3b5998" />
+          <Icon name="chevron-up" size={20} backgroundColor="#3b5998" />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -235,12 +383,12 @@ const Home = ({uploadedData}) => {
           }}
           style={styles.arrowButtons}
         >
-          <Icon name="chevron-down" size={20}  backgroundColor="#3b5998" />
+          <Icon name="chevron-down" size={20} backgroundColor="#3b5998" />
         </TouchableOpacity>
 
         <TouchableOpacity
-         onPress={convertToCSV.bind(this, tempDataGetter)}
-          style={[styles.arrowButtons,{backgroundColor:'black'}]}
+          onPress={convertToCSV.bind(this, tempDataGetter)}
+          style={[styles.arrowButtons, { backgroundColor: "black" }]}
         >
           <Icon name="download" size={20} color="white" />
         </TouchableOpacity>
@@ -295,27 +443,27 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
   },
-  unSelectedItem:{
+  unSelectedItem: {
     padding: 10,
-        backgroundColor: "#fff",
-        flexDirection: "row",
-        borderWidth: 1,
-        marginVertical: 3,
-        marginHorizontal: 10,
-        borderRadius: 8,
-        borderColor: "#767676",
+    backgroundColor: "#fff",
+    flexDirection: "row",
+    borderWidth: 1,
+    marginVertical: 3,
+    marginHorizontal: 10,
+    borderRadius: 8,
+    borderColor: "#767676",
   },
-  selectedItem:{
-    backgroundColor:'#3AB0FF',
+  selectedItem: {
+    backgroundColor: "#3AB0FF",
     padding: 10,
-        flexDirection: "row",
-        borderWidth: 1,
-        marginVertical: 3,
-        marginHorizontal: 10,
-        borderRadius: 8,
-        borderColor: "#767676",
-
+    flexDirection: "row",
+    borderWidth: 1,
+    marginVertical: 3,
+    marginHorizontal: 10,
+    borderRadius: 8,
+    borderColor: "#767676",
   }
+  
 });
 
 export default Home;
