@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
+  TextInput,
   StyleSheet,
   Text,
   View,
@@ -9,10 +10,12 @@ import {
   TouchableOpacity,
   ScrollView,
   Modal,
-  Pressable
+  Alert,
+  Pressable,
 } from "react-native";
 //import { dataBase } from "../data/convertedData";
-import { DataTable } from 'react-native-paper';
+import { DataTable } from "react-native-paper";
+import AwesomeAlert from "react-native-awesome-alerts";
 
 import Icon from "react-native-vector-icons/FontAwesome";
 //var DATA = removeEmptyString(dataBase);
@@ -39,11 +42,10 @@ const Item = ({ title }) => (
 );
 
 const Home = ({ uploadedData }) => {
-
   const [tempDataGetter, tempDataSetter] = React.useState(() => {
     return removeEmptyString(uploadedData);
   });
-  console.log("temp data getter--->",tempDataGetter);
+  console.log("temp data getter--->", tempDataGetter);
   const [isBoxChecked, setCheck] = React.useState(false);
   const [selectedIndex, setSelectedIndex] = React.useState();
   const [getDataKeys, setDataKeys] = React.useState(() => {
@@ -90,23 +92,25 @@ const Home = ({ uploadedData }) => {
 
     //return str;
   }
+
   const upButton = () => {
     let tempData = tempDataGetter;
     let elementAtIndex = tempData[selectedIndex];
     let previousElement = tempData[selectedIndex - 1];
     tempData[selectedIndex] = previousElement;
     tempData[selectedIndex - 1] = elementAtIndex;
-    setSelectedIndex((prevCount) => {
-      return prevCount - 1;
-    });
+    setSelectedIndex(selectedIndex-1);
     tempDataSetter(tempData);
     console.log("UP------>", tempDataGetter);
   };
 
-  const deleteItem=()=> {
-   
-
-  }
+  const deleteItem = (item) => 
+  {
+    let temp=tempDataGetter;
+    temp.splice(tempDataGetter.indexOf(item),1);
+    tempDataSetter([...temp]);
+    console.log("tem",temp);
+  };
 
   const downButton = () => {
     let tempData = tempDataGetter;
@@ -148,27 +152,27 @@ const Home = ({ uploadedData }) => {
     }
   }
 
-  
-  const tableHeader=()=>{
-      return <DataTable.Header style={{borderWidth:0,padding:0,margin:0}}>
-      <DataTable.Title style={{flex:0.3}}> </DataTable.Title>
-        <DataTable.Title style={{flex:0.3}}> </DataTable.Title>
+  const tableHeader = () => {
+    return (
+      <DataTable.Header style={{ borderWidth: 0, padding: 0, margin: 0 }}>
+        <DataTable.Title style={{ flex: 0.3 }}> </DataTable.Title>
+        <DataTable.Title style={{ flex: 0.3 }}> </DataTable.Title>
         <DataTable.Title>{getDataKeys[1]}</DataTable.Title>
         <DataTable.Title>{getDataKeys[3]}</DataTable.Title>
-        <DataTable.Title style={{flex:1.5}}>{getDataKeys[9]}</DataTable.Title>
+        <DataTable.Title style={{ flex: 1.5 }}>
+          {getDataKeys[9]}
+        </DataTable.Title>
         <DataTable.Title>{getDataKeys[5]}</DataTable.Title>
-        <DataTable.Title >{getDataKeys[6]}</DataTable.Title>
-        <DataTable.Title style={{flex:5}}>{getDataKeys[7]}</DataTable.Title>
+        <DataTable.Title>{getDataKeys[6]}</DataTable.Title>
+        <DataTable.Title style={{ flex: 1 }}>{getDataKeys[7]}</DataTable.Title>
         <DataTable.Title> </DataTable.Title>
-    
-      </DataTable.Header>;
-      
-    
-  }
+      </DataTable.Header>
+    );
+  };
 
   const renderItemTable = ({ item }) => (
-   
-
+    
+    
     <View
       style={
         item === tempDataGetter[selectedIndex]
@@ -176,97 +180,50 @@ const Home = ({ uploadedData }) => {
           : styles.unSelectedItem
       }
     >
+      <DataTable style={{ borderWidth: 0, padding: 0, margin: 0 }}>
+        {/* {tableHeader()}  */}
+        <DataTable.Row style={{ borderWidth: 0, padding: 0, margin: 0 }}>
+          <DataTable.Cell style={{ flex: 0.3 }}>
+            <CheckBox
+              //addtotemparray.bind(this,item)
+              value={item.isChecked}
+              onValueChange={() => {
+                handleChange(item);
+              }}
+            />
+          </DataTable.Cell>
+          <DataTable.Cell style={{ flex: 0.3 }}>
+            {item["Sequence"]}
+          </DataTable.Cell>
+          <DataTable.Cell>{item["Item_ID"]}</DataTable.Cell>
+          <DataTable.Cell>{item["Product"]}</DataTable.Cell>
+          <DataTable.Cell>{item["Priority"]}</DataTable.Cell>
+          <DataTable.Cell style={{ flex: 1.5 }}>
+            {item["Task Owner"]}
+          </DataTable.Cell>
 
-<DataTable style={{borderWidth:0,padding:0,margin:0}}>
-       
- {/* {tableHeader()}  */}
-<DataTable.Row style={{borderWidth:0,padding:0,margin:0}}>
-<DataTable.Cell  style={{flex:0.3}}>
-        <CheckBox
-          //addtotemparray.bind(this,item)
-          value={item.isChecked}
-          onValueChange={() => {
-            handleChange(item);
-          }}
-        />
-      </DataTable.Cell>
-      <DataTable.Cell style={{flex:0.3}} >{item["Sequence"]}</DataTable.Cell>
-      <DataTable.Cell >{item["Item_ID"]}</DataTable.Cell>
-      <DataTable.Cell >{item["Product"]}</DataTable.Cell>
-      <DataTable.Cell >{item["Priority"]}</DataTable.Cell>
-      <DataTable.Cell style={{flex:1.5}}>{item["Task Owner"]}</DataTable.Cell>
+          <DataTable.Cell>{item["Type"]}</DataTable.Cell>
+          <DataTable.Cell style={{ flex: 5 }}>
+            {item["Task Name"]}
+          </DataTable.Cell>
+          <DataTable.Cell style={{ flex: 0.3 }}>
+            <Icon
+              name="trash"
+              size={18}
+              color="black"
+              style={{ cursor: "pointer" }}
+              onPress={()=>{
 
-      <DataTable.Cell >{item["Type"]}</DataTable.Cell>
-      <DataTable.Cell  style={{flex:5}}>{item["Task Name"]}</DataTable.Cell>  
-       <DataTable.Cell>
-       <Icon
-        name="pencil"
-        size={18}
-        color="black"
-        style={{ cursor: "pointer", marginHorizontal: 10 }}
-      />
-       
-      <Icon
-        name="trash"
-        size={18}
-        color="black"
-        style={{ cursor: "pointer" }}
-        onPress={() => {
-          
-        }}
-      />
-       </DataTable.Cell>
+deleteItem(item)
+              }}
+            />
+          </DataTable.Cell>
+        </DataTable.Row>
+      </DataTable>
 
-
-
-      
-    </DataTable.Row>
-</DataTable>
-
-      {/* <View>
-        <CheckBox
-          //addtotemparray.bind(this,item)
-          value={item.isChecked}
-          onValueChange={() => {
-            handleChange(item);
-          }}
-          style={styles.checkbox}
-        />
-      </View>
-      <Text
-        numberOfLines={1}
-        style={{ fontSize: 15, textAlign: "left", flex: 1 }}
-      >
-        {item["Sequence"] +
-          "\t| " +
-          item["Item_ID"] +
-          "\t| " +
-          item["Product"] +
-          "\t| " +
-          item["Priority"] +
-          "\t| " +
-          item["Type"] +
-          "\t| " +
-          item["Task Name"] +
-          "\t| " +
-          item["Task Owner"]}
-      </Text>
-      <Icon
-        name="pencil"
-        size={18}
-        color="black"
-        style={{ cursor: "pointer", marginHorizontal: 10 }}
-      />
-      <Icon
-        name="trash"
-        size={18}
-        color="black"
-        style={{ cursor: "pointer" }}
-        onPress={() => {
-          
-        }}
-      /> */}
+     
     </View>
+    
   );
 
   const renderItem = ({ item }) => (
@@ -316,52 +273,24 @@ const Home = ({ uploadedData }) => {
         size={18}
         color="black"
         style={{ cursor: "pointer" }}
-        onPress={() => {
-          
-        }}
+        onPress={() => {}}
       />
     </View>
   );
 
   return (
+    
     <View>
-      {/* <View>
-      <Text
-       numberOfLines={1}
-       style={{ fontSize: 15, textAlign: "left", flex: 1,marginBottom:5,zIndex:2 }}
-      >
-        
-        {getDataKeys[0] +
-          "\t| " +
-          getDataKeys[1] +
-          "\t| " +
-          getDataKeys[2] +
-          "\t| " +
-          getDataKeys[3] +
-          "\t| " +
-          getDataKeys[4] +
-          "\t| " +
-          getDataKeys[5] +
-          "\t| " +
-          getDataKeys[6]}
-      </Text>
-      </View> */}
-      
- 
+
+
       <FlatList
-      style={{marginBottom:60,overflow:'auto'}}
+        style={{ marginBottom: 60 }}
         data={tempDataGetter}
         renderItem={renderItemTable}
-        keyExtractor={(item) => ""+ item["Item_ID"]}
+        keyExtractor={(item) => "" + item["Item_ID"]}
       />
-    
 
-      {/* <View>
-        <Button
-          title="export"
-          onPress={convertToCSV.bind(this, tempDataGetter)}
-        />
-      </View> */}
+
 
       <View
         style={[
@@ -393,7 +322,6 @@ const Home = ({ uploadedData }) => {
           <Icon name="download" size={20} color="white" />
         </TouchableOpacity>
       </View>
-
     </View>
   );
 };
@@ -462,8 +390,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     borderRadius: 8,
     borderColor: "#767676",
-  }
-  
+  },
 });
 
 export default Home;

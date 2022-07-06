@@ -1,13 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import {
   StyleSheet,
-  Text,
   View,
-  FlatList,
-  Button,
-  CheckBox,
-  TouchableOpacity,
-  Alert,
 } from "react-native";
 import Home from "./Screens/Home";
 import UploadPage from "./Screens/UploadPage";
