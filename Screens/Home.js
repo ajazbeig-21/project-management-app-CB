@@ -57,6 +57,7 @@ const Home = ({ uploadedData }) => {
   const [getDeleteIndex, setDeleteIndex] = React.useState();
   const [modalVisible, setModalVisible] = useState(false);
   const [getTempList, setTempList] = React.useState([]);
+  const [text, onChangeText] = React.useState("");
 
   function convertToCSV(objArray) {
     let tempKeys = Object.keys(tempDataGetter[0]);
@@ -204,7 +205,13 @@ const Home = ({ uploadedData }) => {
 
           <DataTable.Cell>{item["Type"]}</DataTable.Cell>
           <DataTable.Cell style={{ flex: 5 }}>
-            {item["Task Name"]}
+            <View  style={{width:450}}>
+          <TextInput
+        style={{padding:10,borderRadius:15}}
+        onChangeText={(Newtext)=>{onChangeText(item["Task Name"]); console.log(text);}}
+        value={item["Task Name"]}
+      />
+      </View>
           </DataTable.Cell>
           <DataTable.Cell style={{ flex: 0.3 }}>
             <Icon
